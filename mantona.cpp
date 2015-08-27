@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
    int id;
    int numberGenerator;
    int processes = MPI::COMM_WORLD.Get_size();
-   int numTypeLines = atoi(argv[1]);
+   string dataset(argv[1]);
    int numMapLines = atoi(argv[2]);
    numWorkers = processes -1;
    id = MPI::COMM_WORLD.Get_rank();
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
    // Stage one create instance to type maps
    getTime(1,id,false);
    // reader->createTypes(inputTypeFile,outputTypeDir, workerId, numWorkers);
-   createSubjTypeFiles(id,numWorkers, numTypeLines);
+   createSubjTypeFiles(id,numWorkers, dataset);
    MPI::COMM_WORLD.Gather(&workerStatus,1, MPI_INT, globalStatus, 1, MPI_INT, 0);
    getTime(2,id,true);
    checkStatus(globalStatus,id,1,processes);
@@ -140,11 +140,11 @@ int main(int argc, char *argv[]) {
 }
 
 // Create subject-type files 
-void createSubjTypeFiles(int processId, int numWorkers, int numLines) {
+void createSubjTypeFiles(int processId, int numWorkers, string dataset) {
    if (processId == 0) return;
    int workerId = processId -1;
    // /projects/ExaHDF5/mlewis/wiki/database/instance_types_en.nt-normal
-   reader->createTypes(inputTypeFile,outputTypeDir, workerId, numWorkers, numLines);
+   reader->createTypes(dataset, outputTypeDir, workerId, numWorkers);
 	workerStatus = 18;
       
 }

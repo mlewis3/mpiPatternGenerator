@@ -152,13 +152,12 @@ void ReaderRDF::normalizeTripleFile(string inTripleFile, int countLimit){
 
 
 // Creating URI-type files from an n-triple type dataset 
-void ReaderRDF::createTypes(string inputBase, string outputDir, int workerId, int numWorkers, int count) {
+void ReaderRDF::createTypes(string dataset, string outputDir, int workerId, int numWorkers) {
 	ifstream inputFileStream;
 	stringstream initialCountStream;
 	// int count = 25000000;
 	initialCountStream << count;
 	stringstream newStream;
-	newStream << inputBase << "-" << initialCountStream.str();
 	string inputFile = newStream.str();
 	int length = 0;  // Total size of the n-tripe type buffer for this node
 	int chunkSize;
@@ -168,14 +167,16 @@ void ReaderRDF::createTypes(string inputBase, string outputDir, int workerId, in
 	multimap<string,string>::iterator iter;
 	multimap<string,string>::iterator iterRange;
 	pair< multimap<string,string>::iterator,multimap<string,string>::iterator > patternRange;
-	ofstream eFileStream;	
 	
 	
-	inputFileStream.open(inputFile.c_str());
- 	if (workerId == 0) eFileStream.open("createTypes.txt",ofstream::out | ofstream::app);
+	inputFileStream.open(dataset.c_str());
 	
-	if (workerId == 0) eFileStream << " Opening file " << inputFile << endl;	
 	if (inputFileStream) {
+
+#ifdef DEBUG
+             cout << " createTypes-open " << workerId << endl;
+#endif
+
 	     if (workerId == 0) eFileStream << " reading file Size " << endl;
 	     int lCount = readFileSize(inputFileStream,false);
 	     if (workerId == 0) eFileStream << " number of lines " << lCount <<  endl;
